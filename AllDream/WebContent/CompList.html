@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/custom.css">
+	<link rel="stylesheet" href="css/comp.css">
+	<title>모두드림</title>
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="js/bootstrap.js"></script>
+	<script>
+	$(function(){
+		  $('#keywords').tablesorter(); 
+		});
+		var userID = "${userID }";
+	</script>
+</head>
+<body>
+
+	<nav class="navbar navbar-default">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+			data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>			
+			</button>
+		
+			<a class="navbar-brand" href="index.jsp">모두드림</a>
+		</div>
+		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+			<ul class="nav navbar-nav">
+				<li><a href="index.jsp">메인</a></li>
+				<li><a href="jusoPopup.jsp">지역설정</a></li>
+				<li><a href="NoticeList.jsp">공지사항</a></li>
+				<li class="active"><a href="CompList.html">기관리스트</a></li>
+				<li><a href="find.jsp">친구찾기</a></li>
+				<li><a href="messageBox.jsp" class="count_unread">메시지함 <strong style="color:red;"></strong></a></li>		
+			</ul>	
+			<ul class="nav navbar-nav navbar-right">
+				<li class="dropdown">
+					<a href="#none" class="dropdown-toggle"
+						data-toggle="dropdown" role="button" aria-haspopup="true"
+						aria-expanded="false">회원관리<span class="caret"></span>
+					</a>
+					<ul class="dropdown-menu">
+						<li><a href="modifyAction?userIDforMod=${userID }">회원정보 수정</a></li>
+						<li><a href="logoutAction.jsp">로그아웃</a></li>
+					</ul>
+				</li>
+			</ul>		
+			
+		</div>
+	</nav>
+<div class="container">
+		<table class="table table-bordered table-hover" style="text-align:center;border:1px solid #ddd">
+			<thead>
+				<tr>
+					<th colspan="4"><h4>기관리스트</h4></th>
+				</tr>
+			</thead>
+    <thead>
+      <tr>
+        <th><span>기관명</span></th>
+        <th><span>주소</span></th>
+        <th><span>전화번호</span></th>
+        <th><span>분야</span></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="lalign">창동 노인복지센터</td>
+        <td>덕릉로 60차길 6</td>
+        <td>02-906-2968</td>
+        <td>노인 복지/여가</td>
+      </tr>
+      <tr>
+        <td class="lalign">노원구청소년상담복지센터</td>
+        <td>덕릉로 777 대성빌딩 2층</td>
+        <td>02-2091-1386</td>
+        <td>청소년 상담</td>
+      </tr>
+      <tr>
+        <td class="lalign">상계종합사회복지관</td>
+        <td>덕릉로115나길 25</td>
+        <td>02-951-9930</td>
+        <td>사회</td>
+      </tr>
+      <tr>
+        <td class="lalign">서울시립북부장애인종합복지관</td>
+        <td>덕릉로 70가길 92 </td>
+        <td>02-2092-1700 </td>
+        <td>장애인 복지</td>
+      </tr>
+      <tr>
+        <td class="lalign">가나안복지센터</td>
+        <td>서울특별시 노원구 덕릉로115나길 46</td>
+        <td>02-952-4264</td>
+        <td>치매 환자</td>
+      </tr>
+    </tbody>
+  </table>
+ </div> 
+</body>
+</html>

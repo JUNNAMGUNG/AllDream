@@ -1,0 +1,182 @@
+<html>
+<head>
+<title>모두나눔</title>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="css/common.css">
+<link rel="stylesheet" href="css/core.css">
+<style type="text/css">
+.border {
+	float: left;
+	width: 100%;
+	padding: 12px;
+	box-sizing: border-box;
+	border: 1px solid #ddd;
+	border-radius: 4px;
+}
+textarea {
+	float: left;
+	width: 100%;
+	height: 7em;
+	line-height: 1.4em;
+	border: none;
+	outline: none;
+}
+.camera {
+	float: right;
+	width: 50px; height: 36px; 
+	background-size: 36px;
+	background-position: 50%;
+	background-repeat: no-repeat;
+	background-image: url(images/ico_camera_add.png);
+	cursor: pointer;
+}
+.img-pane {
+	float: left;
+	width: 100%;
+	padding: 10px 4px; 
+	box-sizing: border-box;
+}
+.img-pane .grid-33 {
+	float: left;
+	width: 33.33%;
+	box-sizing : border-box;	
+	padding: 1px;
+}
+.img-pane .icon-box {
+	position: relative;
+}
+.img-pane .icon-box .icon {
+	z-index: 10;
+    position: absolute;
+    right: 8px; top: 8px;
+    width: 16px; height: 16px;
+    cursor: pointer;
+}
+.flex-embed {
+	position: relative;
+	overflow: hidden;
+	background-position: 50%;
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.flex-embed:before {
+	content: "";
+	display: block;
+	width: 100%;
+	padding-bottom: 75%;
+}
+</style>
+</head>
+<body>
+<div class="page-hdr">모두나눔</div>
+<div class="page-body">
+	<input type="hidden" id="no">
+	<div class="section mtop-20 pad-16">
+		<input id="title" type="text" placeholder="제목을 입력하세요">
+		<div class="img-pane"></div>
+		<div id="images" class="img-pane"></div>
+		<div class="section"><div class="camera" onclick="ImageUploader.add()"></div></div>
+	</div>
+	<div class="section mtop-20 pad-16">
+		<!-- [HGKIM] textarea 태그 추가 -->
+		<div class="border">
+			<textarea id="desc" placeholder="내용을 입력해주세요."></textarea>
+		</div>
+		<input type="submit" class="mtop-20" value="작성완료" onclick="done()">
+	</div>
+</div>
+</body>
+</html>
+
+<script src="js/jquery-1.12.0.min.js"></script>
+<script src="js/core.js"></script>
+<script src="js/image.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	Page.init(start, "feedUpdate.html");
+});
+
+/*
+function getParameterByName(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+            results = regex.exec(location.search);
+    return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+*/
+
+var pagectx = {};
+function start(usrobj, param) {
+	ImageUploader.init(".img-pane");
+	
+	pagectx.usrobj = usrobj;
+	generate(param);	// [HGKIM] generate(usrobj) --> generate(param)
+}
+
+function generate(feed) {
+	// [HGKIM] 불필요한 부분 주석 처리
+	/*
+	var params = "no=" + getParameterByName('no');
+	AJAX.call("jsp/feedDetail.jsp", params, function(data){
+		var feeds = JSON.parse(data.trim());
+		pagectx.feeds = feed;
+		
+		var str = "<textarea id='desc' placeholder='내용을 입력해주세요.'>" + feed.desc +"</textarea>";
+		$("#border").html(str);
+	});
+	*/
+	if(feed.images != ''){
+		var str = "<div class='image' style='background-image: url(\"" + getImageUrl(feed.images) + "\")'></div>";
+	}
+	
+	$("#images").html(str);
+	$("#no").val(feed.no);
+	$("#title").val(feed.title);
+	$("#desc").val(feed.desc);
+}
+
+function getImageUrl(filename){
+	return "users/" +pagectx.usrobj.userID + "/" + filename;
+}
+
+function done() {
+	var no = $("#no").val().trim();
+	var title = $("#title").val().trim();
+	if (title == "") {
+		alert("제목을 입력해 주세요.");
+		$("#title").focus();
+		return;
+	}
+	
+	var desc = $("#desc").val().trim();
+	if (desc == "" ){//}|| desc.length < 10) {
+		alert("내용을 10글자 이상 작성해 주세요.");
+		$("#desc").focus();
+		return;
+	}
+	
+	var feed = {
+			no: no,
+			author: pagectx.usrobj,
+			//images: ImageUploader.get(),
+			title: title,
+			desc: desc,
+	};
+
+	//var params = "id=" + pagectx.usrobj.id + "&feed=" + JSON.stringify(feed);
+	var params = new FormData();
+	params.append("no", no);
+	params.append("userID", pagectx.usrobj.userID);
+	params.append("feed", JSON.stringify(feed));
+	params = ImageUploader.appendParams(params, "images");
+
+	//AJAX.call("jsp/feedAdd.jsp", params, function(data) {
+	AJAX.formCall("jsp/feedUpdate.jsp", params, function(data) {
+		alert("작성하신 글이 수정 되었습니다.");
+		window.location.href = "main.html";
+	});
+
+	// TODO something here ----------------------------
+}
+</script>

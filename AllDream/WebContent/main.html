@@ -1,0 +1,165 @@
+<!-- 
+09. Dynamic insertion with JQuery
+-->
+<html>
+<head>
+<title>모두 나눔</title>
+<meta name=viewport content="width=device-width, initial-scale=1, user-scalable=0">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="css/common.css">
+<style type="text/css">
+	/* define page-dependent styles here */
+</style>
+</head>
+<body>
+ 
+<!-- <div id="header-area" class="section">
+	<h3>모두 나눔</h3>
+</div>  -->
+
+<div id="menu-area" class="section">
+	<ul>
+		<li onclick="addFeed()">글쓰기</li>
+		<!-- <li onclick="logout()">로그아웃</li> -->
+	</ul>
+</div>
+<div id="contents-area" class="section"></div>
+
+
+<div id="footer-area" class="section">
+	Copyright: alldream.com, 2020
+</div>
+
+</body>
+</html>
+
+<script src="js/jquery-1.12.0.min.js"></script>
+<script src="js/core.js"></script>
+<script type="text/javascript">
+$(document).ready(function() {
+	Page.init(start);
+});
+
+var pagectx ={};
+
+function start(usrobj) {
+	pagectx.usrobj = usrobj;
+
+	var params = "userID=" + usrobj
+	AJAX.call("jsp/feedFetch.jsp", params, function(data){
+		var feeds = JSON.parse(data.trim());
+		pagectx.feeds = feeds;
+
+		generate(feeds);
+	});
+}
+
+function generate(list) {
+	var str = "";
+	for(var i=0; i<list.length; i++){
+		str += getFeedStr(list[i]);
+	}
+	$("#contents-area").html(str);
+}
+
+function getFeedStr(feed) {
+	var str = "";
+
+	str += "<div class='feed'>";
+	str += "<div class='author'>";
+	str += "<div class='photo'></div>";
+	str += "<div class='name'>" + feed.author + "</div>";
+	if (pagectx.usrobj == feed.author) {
+		//str += "<div class='btn-del' onclick='deleteFeed(" + feed.no + ")'></div>"; 
+		//str += "<div class='btn-del pencil' onclick='updateFeed(" + feed.no + ")'></div>"; 
+	}
+	str += "</div>";
+
+	if(feed.images != null){
+		if (feed.images.length == 1) {
+			str += "<div class='section'>";
+			str += "<div class='image' style='width: 300px; height: 120px;background-image: url(\"" + getImageUrl(feed.images[0]) + "\")'></div>";
+			str += "</div>";
+		}else if (feed.images.length == 2) {
+			str += "<div class='grid-50'>";
+			//str += "<div class='image' style='background-image: url(\"" + feed.images[0] + "\")'></div>";
+			str += "<div class='image' style='width: 300px; height: 120px;background-image: url(\"" + getImageUrl(feed.images[0]) + "\")'></div>";
+			str += "</div>";
+			str += "<div class='grid-50'>";
+			//str += "<div class='image' style='background-image: url(\"" + feed.images[1] + "\")'></div>";
+			str += "<div class='image' style='width: 300px; height: 120px;background-image: url(\"" + getImageUrl(feed.images[1]) + "\")'></div>";
+			str += "</div>";
+		}else if (feed.images.length == 3) {
+			// TODO something here ...
+		}
+	}
+	str += "<div class='btn-del pencil' onclick='detailFeed(" + feed.no + ")'><p>" + feed.desc + "</p></div>";
+	//str += "<p>" + feed.desc + "</p>";
+	str += "</div>";
+	// [HGKIM] return문 추가
+	return str;
+}
+
+function getImageUrl(filename){
+	return "users/" +pagectx.usrobj + "/" + filename;
+}
+
+function logout() {
+	var res = confirm("로그아웃하시겠습니까?");	
+	if(res){
+		AJAX.call("jsp/logout.jsp", null, function(){
+			window.location.href = "login.jsp";
+		});
+	}
+}
+
+function deleteFeed(feedNo){
+	var res = confirm("선택하신 글을 삭제하시겠습니까?");
+	if(res == true)	{
+		var params = "no=" + feedNo;
+		AJAX.call("jsp/feedDelete.jsp", params, function(data){
+			window.location.replace();
+		});
+	}
+}
+
+function detailFeed(feedNo) {
+	window.location.href = "feedDetail.html?no=" + feedNo;
+	/* var feed = null;
+	for(var i=0; i<pagectx.feeds.length; i++){
+		if(pagectx.feeds[i].no != null && pagectx.feeds[i].no == feedNo){
+			alert(feed);
+			break;
+		}
+	}
+	if(feed == null){
+		alert("선택된 피드가 없습니다.");
+		return;
+	}
+	Page.go("feedDetail.html", feed);	// [HGKIM] page --> Page */
+}
+function updateFeed(feedNo) {
+	// [HGKIM] Page.go 호출하도록 수정
+	//window.location.href = "feedUpdate.html?no=" + feedNo;
+	var feed = null;
+	for(var i=0; i<pagectx.feeds.length; i++){
+		if(pagectx.feeds[i].no != null && pagectx.feeds[i].no == feedNo){
+			feed = pagectx.feeds[i];
+			break;
+		}
+	}
+	if(feed == null){
+		alert("선택된 피드가 없습니다.");
+		return;
+	}
+	Page.go("feedUpdate.html", feed);	// [HGKIM] page --> Page
+}
+
+function addFeed() {
+	window.location.href = "write.html";
+}
+
+function showFeed(index) {
+	window.location.href = "feed-" + index + ".html";
+}
+</script>
